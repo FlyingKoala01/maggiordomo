@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Maggiordomo</title>
+  <link rel="stylesheet" href="../shared/common.css" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="popup-header">
+    <div class="brand"><span class="brand-mark">M</span> Maggiordomo</div>
+    <div class="row">
+      <button class="btn btn-sm" id="save-tab" title="Save the current tab (Alt+Shift+S)">+ Save tab</button>
+      <button class="btn btn-sm btn-primary" id="open-workbench" title="Open the workbench (Alt+Shift+M)">Workbench</button>
+    </div>
+  </header>
+
+  <div class="popup-search">
+    <input type="search" id="search" placeholder="Search links… (#tag to filter by tag)" autofocus autocomplete="off" />
+  </div>
+
+  <div id="tags" class="popup-tags"></div>
+  <div id="list" class="popup-list"></div>
+
+  <nav class="popup-tools">
+    <a href="#json" data-tool="json" title="JSON beautifier">{ }</a>
+    <a href="#markdown" data-tool="markdown" title="Markdown notes">MD</a>
+    <a href="#encode" data-tool="encode" title="Encoders">b64</a>
+    <a href="#jwt" data-tool="jwt" title="JWT decoder">JWT</a>
+    <a href="#regex" data-tool="regex" title="Regex tester">/re/</a>
+    <a href="#timestamp" data-tool="timestamp" title="Timestamp converter">⏱</a>
+    <a href="#uuid" data-tool="uuid" title="UUID generator">uuid</a>
+    <a href="#hash" data-tool="hash" title="Hashes">#</a>
+  </nav>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

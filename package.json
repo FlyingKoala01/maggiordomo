@@ -1,0 +1,15 @@
+{
+  "name": "maggiordomo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser extension: a developer's butler with dev links, markdown notes, JSON and other everyday tools.",
+  "type": "module",
+  "scripts": {
+    "test": "node test/run.js",
+    "smoke": "node test/smoke.mjs",
+    "zip": "node scripts/zip.js"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^23.0.0"
+  }
+}
