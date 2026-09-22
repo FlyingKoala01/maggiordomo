@@ -8,6 +8,7 @@ A developer's butler in the browser toolbar. Dev links, markdown notes, a JSON b
 | --- | --- |
 | Dev links | Save pages and links with tags and notes. Search by words or `#tag`, pin favourites, import/export JSON or a browser bookmarks HTML file. Right-click any page or link → *Save to Maggiordomo*. |
 | Markdown | Multiple notes with live preview (GitHub-flavored), autosave, copy as HTML, download `.md`, print to PDF. Rendered with marked and sanitized with DOMPurify. |
+| Markdown viewer | Open any `.md` file in the browser (`file://`, raw GitHub or Gist URLs) and it renders in place: table of contents, front matter, raw/rendered toggle, light/dark, copy HTML, *Save to notes*. |
 | JSON | Beautify, minify, validate with line/column and *jump to error*, sort keys, collapsible tree view (click a value to copy it, alt+click for its path), escape/unescape string-wrapped JSON, and a best-effort *Repair* for JS-style input. |
 | Encode / Decode | Base64 (plain and URL-safe), URL component/URI, HTML entities, hex, binary, unicode escapes, ROT13, plus decimal/hex/octal/binary conversion. |
 | JWT | Decode header and payload, read `exp`/`iat`/`nbf` as dates, verify HS256/384/512, RS*, PS* and ES* signatures with a secret or PEM public key, and sign HS tokens. |
@@ -26,6 +27,8 @@ Keyboard: `Alt+Shift+M` opens the workbench, `Alt+Shift+S` saves the current tab
 2. Enable **Developer mode**.
 3. Click **Load unpacked** and pick this folder.
 
+4. To render local `.md` files, open the extension's **Details** page and enable **Allow access to file URLs**. Then open any markdown file (drag it into a tab or use a `file:///` path).
+
 The toolbar popup shows your links and shortcuts to the tools. The full workbench opens in a tab (also available as the extension's options page). All data lives in `chrome.storage.local`; use **Export** / **Import** in the workbench sidebar for backups.
 
 ## Layout
@@ -35,6 +38,7 @@ manifest.json          Manifest V3
 icons/                 generated PNG icons
 vendor/                marked (MIT) and DOMPurify (Apache-2.0/MPL-2.0), vendored, no CDN
 src/background.js      service worker: context menus, keyboard commands, badge feedback
+src/content/           content script that renders raw .md files in place
 src/popup/             toolbar popup: quick links, save current tab, tool shortcuts
 src/workbench/         full-page shell: sidebar, hash routing, theme, export/import
 src/shared/            storage wrapper, DOM helpers, links model, shared CSS

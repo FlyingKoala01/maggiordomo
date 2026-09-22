@@ -26,6 +26,17 @@
     "page": "src/workbench/workbench.html",
     "open_in_tab": true
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "file:///*",
+        "https://raw.githubusercontent.com/*",
+        "https://gist.githubusercontent.com/*"
+      ],
+      "js": ["vendor/marked.min.js", "vendor/purify.min.js", "src/content/md-viewer.js"],
+      "run_at": "document_end"
+    }
+  ],
   "permissions": [
     "storage",
     "contextMenus",

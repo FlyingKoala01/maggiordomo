@@ -87,6 +87,18 @@ try {
   const cards = await page.$$eval('.link-card', (ns) => ns.length);
   if (!cards) problems.push('[links] adding a link failed');
 
+  // Markdown viewer content script on a local .md file
+  const md = await browser.newPage();
+  md.on('pageerror', (err) => problems.push(`[md-viewer] ${err.message}`));
+  await md.goto('file:///' + resolve(EXT, 'test/fixtures/sample.md').replace(/\\/g, '/'), { waitUntil: 'load' });
+  await sleep(600);
+  const view = await md.evaluate(() => ({
+    active: document.body.classList.contains('md-viewer'),
+    toc: document.querySelectorAll('.md-toc a').length,
+    pwned: window.__pwned,
+  }));
+  if (!view.active || view.toc !== 4 || view.pwned) problems.push('[md-viewer] unexpected: ' + JSON.stringify(view));
+
   const popup = await browser.newPage();
   popup.on('pageerror', (err) => problems.push(`[popup] ${err.message}`));
   await popup.goto(url('src/popup/popup.html'), { waitUntil: 'load' });
