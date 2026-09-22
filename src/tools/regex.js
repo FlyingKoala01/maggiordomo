@@ -87,10 +87,8 @@ export default {
       }
       const input = text.value;
       const matches = findMatches(re, input);
-      status.append(
-        el('span', { class: matches.length ? 'ok' : '' }, `${matches.length}${matches.length >= MAX_MATCHES ? '+' : ''} match${matches.length === 1 ? '' : 'es'}`),
-        !f.includes('g') && matches.length > 1 ? el('span', { class: 'muted' }, 'without the g flag only the first match is used by replace') : null,
-      );
+      status.append(el('span', { class: matches.length ? 'ok' : '' }, `${matches.length}${matches.length >= MAX_MATCHES ? '+' : ''} match${matches.length === 1 ? '' : 'es'}`));
+      if (!f.includes('g') && matches.length > 1) status.append(el('span', { class: 'muted' }, 'without the g flag only the first match is used by replace'));
 
       // Highlight
       let html = '';
