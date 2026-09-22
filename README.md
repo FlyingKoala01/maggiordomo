@@ -9,6 +9,7 @@ A developer's butler in the browser toolbar. Dev links, markdown notes, a JSON b
 | Dev links | Save pages and links with tags and notes. Search by words or `#tag`, pin favourites, import/export JSON or a browser bookmarks HTML file. Right-click any page or link → *Save to Maggiordomo*. |
 | Markdown | Multiple notes with live preview (GitHub-flavored), autosave, copy as HTML, download `.md`, print to PDF. Rendered with marked and sanitized with DOMPurify. |
 | Markdown viewer | Open any `.md` file in the browser (`file://`, raw GitHub or Gist URLs) and it renders in place: table of contents, front matter, raw/rendered toggle, light/dark, copy HTML, *Save to notes*. |
+| Word / Excel | Drop a `.docx` or spreadsheet (`.xlsx`, `.xlsm`, `.xls`, `.csv`, `.tsv`, `.ods`) to read it in the browser. Word: content, headings, lists, tables and images via mammoth, with copy as HTML/text, print, and *Save as markdown note*. Sheets: tabs per sheet, sticky headers, row filter, copy as TSV/markdown/JSON, CSV export. Right-click a link to such a file → *Open with Maggiordomo*. |
 | JSON | Beautify, minify, validate with line/column and *jump to error*, sort keys, collapsible tree view (click a value to copy it, alt+click for its path), escape/unescape string-wrapped JSON, and a best-effort *Repair* for JS-style input. |
 | Encode / Decode | Base64 (plain and URL-safe), URL component/URI, HTML entities, hex, binary, unicode escapes, ROT13, plus decimal/hex/octal/binary conversion. |
 | JWT | Decode header and payload, read `exp`/`iat`/`nbf` as dates, verify HS256/384/512, RS*, PS* and ES* signatures with a secret or PEM public key, and sign HS tokens. |
@@ -36,7 +37,7 @@ The toolbar popup shows your links and shortcuts to the tools. The full workbenc
 ```
 manifest.json          Manifest V3
 icons/                 generated PNG icons
-vendor/                marked (MIT) and DOMPurify (Apache-2.0/MPL-2.0), vendored, no CDN
+vendor/                marked (MIT), DOMPurify (Apache-2.0/MPL-2.0), mammoth (BSD-2), SheetJS CE (Apache-2.0); vendored, no CDN
 src/background.js      service worker: context menus, keyboard commands, badge feedback
 src/content/           content script that renders raw .md files in place
 src/popup/             toolbar popup: quick links, save current tab, tool shortcuts
@@ -66,3 +67,5 @@ Everything is plain ES modules loaded straight by the browser, so editing a file
 - Google Chrome's branded builds no longer accept `--load-extension` for automated testing; Edge and Chrome for Testing still do.
 - Firefox needs `background.scripts` instead of `background.service_worker` and does not expose `/_favicon/`; it is not supported yet.
 - MD5 is provided for checksums only, not for anything security related.
+- Word rendering keeps content, not layout: no page breaks, headers, footers or exact fonts. Spreadsheets show saved formula results, no recalculation and no charts. PowerPoint is deliberately not supported; browser-side renderers for it are too unfaithful to be useful.
+- Opening a document from an `http(s)` link asks for permission to that site the first time (optional host permission, granted per origin). Local links need "Allow access to file URLs".

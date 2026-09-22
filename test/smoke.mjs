@@ -32,7 +32,7 @@ try {
   page.on('pageerror', (err) => problems.push(`[pageerror] ${err.message}`));
   page.on('dialog', (d) => d.dismiss());
 
-  const tools = ['links', 'markdown', 'json', 'encode', 'jwt', 'regex', 'timestamp', 'uuid', 'hash', 'color', 'text'];
+  const tools = ['links', 'markdown', 'office', 'json', 'encode', 'jwt', 'regex', 'timestamp', 'uuid', 'hash', 'color', 'text'];
   for (const tool of tools) {
     await page.goto(url(`src/workbench/workbench.html#${tool}`), { waitUntil: 'load', timeout: 15000 });
     await sleep(400);
@@ -98,6 +98,18 @@ try {
     pwned: window.__pwned,
   }));
   if (!view.active || view.toc !== 4 || view.pwned) problems.push('[md-viewer] unexpected: ' + JSON.stringify(view));
+
+  // Office viewer: docx and xlsx fixtures through the ?url= route
+  for (const [file, check] of [
+    ['sample.docx', () => document.querySelector('.office-doc h1')?.textContent === 'Fixture document' && document.querySelectorAll('.office-doc li').length === 2],
+    ['sample.xlsx', () => document.querySelectorAll('table.sheet tbody tr').length === 4],
+  ]) {
+    const fileUrl = 'file:///' + resolve(EXT, 'test/fixtures', file).replace(/\\/g, '/');
+    await page.goto(url('src/workbench/workbench.html#office?url=' + encodeURIComponent(fileUrl)), { waitUntil: 'load' });
+    await sleep(1200);
+    const ok = await page.evaluate(check);
+    if (!ok) problems.push(`[office] ${file} did not render as expected`);
+  }
 
   const popup = await browser.newPage();
   popup.on('pageerror', (err) => problems.push(`[popup] ${err.message}`));

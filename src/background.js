@@ -1,6 +1,8 @@
 import { addLink } from './shared/links.js';
 
 const WORKBENCH = 'src/workbench/workbench.html';
+const OFFICE_PATTERNS = ['docx', 'xlsx', 'xlsm', 'xls', 'csv', 'tsv', 'ods']
+  .flatMap((ext) => [`*://*/*.${ext}*`, `file:///*.${ext}`]);
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {
@@ -8,6 +10,12 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({ id: 'save-link', title: 'Save link to Maggiordomo', contexts: ['link'] });
     chrome.contextMenus.create({ id: 'open-workbench', title: 'Open workbench', contexts: ['action'] });
     chrome.contextMenus.create({ id: 'save-tab', title: 'Save current tab to dev links', contexts: ['action'] });
+    chrome.contextMenus.create({
+      id: 'open-office',
+      title: 'Open with Maggiordomo (Word / Excel)',
+      contexts: ['link'],
+      targetUrlPatterns: OFFICE_PATTERNS,
+    });
   });
 });
 
@@ -19,6 +27,8 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       await saveAndFlash({ title: info.selectionText || info.linkUrl, url: info.linkUrl });
     } else if (info.menuItemId === 'open-workbench') {
       openWorkbench();
+    } else if (info.menuItemId === 'open-office' && info.linkUrl) {
+      openWorkbench('#office?url=' + encodeURIComponent(info.linkUrl));
     }
   } catch (err) {
     console.error('Maggiordomo:', err);

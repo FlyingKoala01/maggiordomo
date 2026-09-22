@@ -44,6 +44,10 @@
     "favicon",
     "clipboardWrite"
   ],
+  "optional_host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "commands": {
     "open-workbench": {
       "suggested_key": { "default": "Alt+Shift+M" },

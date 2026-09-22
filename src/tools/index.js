@@ -9,6 +9,7 @@ import timestamp from './timestamp.js';
 import regex from './regex.js';
 import color from './color.js';
 import text from './text.js';
+import office from './office.js';
 
 // Order here is the sidebar order. Alt+1..9 jump to the first nine.
-export default [links, markdown, json, encode, jwt, regex, timestamp, uuid, hash, color, text];
+export default [links, markdown, office, json, encode, jwt, regex, timestamp, uuid, hash, color, text];
