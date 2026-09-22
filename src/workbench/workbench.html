@@ -20,6 +20,9 @@
         <label class="inline small sidebar-setting" title="When a .docx / .xlsx / .csv download starts, cancel it and open the file in the Word / Excel viewer instead. Asks for the downloads permission once.">
           <input type="checkbox" id="intercept-downloads" /> Open Word/Excel downloads in viewer
         </label>
+        <label class="inline small sidebar-setting" title="Skip a download when a file with the same name and exact size is already in your Downloads folder. Shows a notification with Open / Show in folder / Download anyway. Asks for the downloads and notifications permissions once.">
+          <input type="checkbox" id="dedupe-downloads" /> Skip duplicate downloads (same name and size)
+        </label>
         <button class="btn btn-ghost btn-sm" id="theme-toggle" title="Toggle theme">◐ Theme</button>
         <button class="btn btn-ghost btn-sm" id="export-all" title="Export all data as JSON">⇩ Export</button>
         <button class="btn btn-ghost btn-sm" id="import-all" title="Import data from a JSON export">⇧ Import</button>

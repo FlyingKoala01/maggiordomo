@@ -44,7 +44,7 @@
     "favicon",
     "clipboardWrite"
   ],
-  "optional_permissions": ["downloads"],
+  "optional_permissions": ["downloads", "downloads.open", "notifications"],
   "optional_host_permissions": [
     "http://*/*",
     "https://*/*"

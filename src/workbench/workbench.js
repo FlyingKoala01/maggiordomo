@@ -57,30 +57,41 @@ async function applyTheme(next) {
   if (next) await storage.set('settings', { ...settings, theme });
 }
 
-// Opt-in download interception for Word / Excel files (needs the optional "downloads" permission).
-const intercept = $('#intercept-downloads');
+// Opt-in download features. Each switch requests its optional permissions when turned on and
+// releases the ones no other switch still needs when turned off.
+const DOWNLOAD_SWITCHES = [
+  { el: $('#intercept-downloads'), key: 'interceptDownloads', perms: ['downloads'], on: 'Word / Excel downloads will open in the viewer', off: 'Downloads left alone' },
+  { el: $('#dedupe-downloads'), key: 'dedupeDownloads', perms: ['downloads', 'downloads.open', 'notifications'], on: 'Duplicate downloads will be skipped', off: 'Duplicate check disabled' },
+];
 (async () => {
   const settings = await storage.get('settings', {});
-  const granted = await chrome.permissions.contains({ permissions: ['downloads'] });
-  intercept.checked = !!settings.interceptDownloads && granted;
-})();
-intercept.addEventListener('change', async () => {
-  const settings = await storage.get('settings', {});
-  if (intercept.checked) {
-    const ok = await chrome.permissions.request({ permissions: ['downloads'] });
-    if (!ok) {
-      intercept.checked = false;
-      toast('Permission not granted', 'error');
-      return;
-    }
-    await storage.set('settings', { ...settings, interceptDownloads: true });
-    toast('Word / Excel downloads will open in the viewer', 'ok');
-  } else {
-    await storage.set('settings', { ...settings, interceptDownloads: false });
-    await chrome.permissions.remove({ permissions: ['downloads'] }).catch(() => {});
-    toast('Downloads left alone', 'info');
+  for (const sw of DOWNLOAD_SWITCHES) {
+    const granted = await chrome.permissions.contains({ permissions: sw.perms });
+    sw.el.checked = !!settings[sw.key] && granted;
   }
-});
+})();
+for (const sw of DOWNLOAD_SWITCHES) {
+  sw.el.addEventListener('change', async () => {
+    const settings = await storage.get('settings', {});
+    if (sw.el.checked) {
+      const ok = await chrome.permissions.request({ permissions: sw.perms });
+      if (!ok) {
+        sw.el.checked = false;
+        toast('Permission not granted', 'error');
+        return;
+      }
+      await storage.set('settings', { ...settings, [sw.key]: true });
+      toast(sw.on, 'ok');
+    } else {
+      const next = { ...settings, [sw.key]: false };
+      await storage.set('settings', next);
+      const stillNeeded = new Set(DOWNLOAD_SWITCHES.filter((o) => next[o.key]).flatMap((o) => o.perms));
+      const release = sw.perms.filter((p) => !stillNeeded.has(p));
+      if (release.length) await chrome.permissions.remove({ permissions: release }).catch(() => {});
+      toast(sw.off, 'info');
+    }
+  });
+}
 
 $('#theme-toggle').addEventListener('click', () => {
   const now = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
