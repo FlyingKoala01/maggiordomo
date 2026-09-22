@@ -274,7 +274,15 @@ export default {
     }
 
     const url = params.get('url');
-    if (url) openUrl(url);
+    if (url) {
+      if (params.get('intercepted')) {
+        drop.append(el('div', { class: 'row', style: { justifyContent: 'center', marginTop: '8px' } },
+          el('span', { class: 'muted small' }, 'Opened instead of downloading.'),
+          el('button', { class: 'btn btn-sm', onclick: () => chrome.runtime.sendMessage({ type: 'download-original', url }) }, 'Download the file instead'),
+        ));
+      }
+      openUrl(url);
+    }
 
     return {
       cleanup: () => {

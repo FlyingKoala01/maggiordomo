@@ -57,6 +57,31 @@ async function applyTheme(next) {
   if (next) await storage.set('settings', { ...settings, theme });
 }
 
+// Opt-in download interception for Word / Excel files (needs the optional "downloads" permission).
+const intercept = $('#intercept-downloads');
+(async () => {
+  const settings = await storage.get('settings', {});
+  const granted = await chrome.permissions.contains({ permissions: ['downloads'] });
+  intercept.checked = !!settings.interceptDownloads && granted;
+})();
+intercept.addEventListener('change', async () => {
+  const settings = await storage.get('settings', {});
+  if (intercept.checked) {
+    const ok = await chrome.permissions.request({ permissions: ['downloads'] });
+    if (!ok) {
+      intercept.checked = false;
+      toast('Permission not granted', 'error');
+      return;
+    }
+    await storage.set('settings', { ...settings, interceptDownloads: true });
+    toast('Word / Excel downloads will open in the viewer', 'ok');
+  } else {
+    await storage.set('settings', { ...settings, interceptDownloads: false });
+    await chrome.permissions.remove({ permissions: ['downloads'] }).catch(() => {});
+    toast('Downloads left alone', 'info');
+  }
+});
+
 $('#theme-toggle').addEventListener('click', () => {
   const now = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
   applyTheme(now);
